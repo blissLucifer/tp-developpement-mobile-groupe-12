@@ -1,17 +1,34 @@
-# app_meteo
+# TP - Developpement mobile avance
+## Nom du projet
+Application meteo AppMeteo - TP UE2
 
-A new Flutter project.
+## Membres du groupe
+| N | Nom et prenom | Role dans le groupe |
+|----|----------------|---------------------|
+| 1 | HOUSSOU Bliss | Chef de groupe |
+| 2 | AMEGNIKPO Cheba Reshmine | Developpeuse |
+| 3 | ASSOGBA Léonie | Developpeuse |
+| 4 | ADAGBE Mauricette | Developpeuse |
+| 5 | SALIFOU Sabi Fawaz | Developpeur |
+| 6 | TAWAN Damienne | Rapporteur |
 
-## Getting Started
+## Enseignant
+TOGNON Jean - Paul
+Adresse mail : tognonjeanpaul@gmail .com
+(L'enseignant a ete invite comme collaborateur du depot GitHub )
 
-This project is a starting point for a Flutter application.
+## Description du projet
+Ce projet est realise dans le cadre du TP1 du cours
+UE2 - Aspects avances du developpement mobile .
+Il consiste a construire une application Flutter AppMeteo
+avec une architecture MVVM et le package Provider .
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Technologies utilisees
+- Flutter / Dart
+- Package provider
+- Git / GitHub
+## Instructions pour lancer le projet
+1. Installer Flutter ( https :// flutter .dev)
+2. Cloner le depot : git clone <URL_du_depot >
+3. Installer les dependances : flutter pub get
+4. Lancer l'application : flutter run
