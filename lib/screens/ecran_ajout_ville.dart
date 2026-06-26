@@ -27,6 +27,7 @@ class _EcranAjoutVilleState extends State<EcranAjoutVille> {
     'Pluvieux',
     'Orageux',
     'Venteux',
+    'Neigeux',
   ];
 
   void _valider() {
