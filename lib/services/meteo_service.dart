@@ -3,7 +3,7 @@ import '../models/meteo_data.dart';
 import '../models/prevision_jour.dart';
 
 class MeteoService {
-  static const Map<String, List<double>> _coords = {
+  static const Map<String, List<double>> coords = {
     'Cotonou':     [6.3703,    2.3912],
     'Parakou':     [9.3370,    2.6283],
     'Lagos':       [6.4541,    3.3947],
@@ -19,7 +19,7 @@ class MeteoService {
     'Kinshasa':    [-4.3217,  15.3222],
     'Abuja':       [9.0765,    7.3986],
     'Natitingou':  [10.3167,   1.3833],
-    'Dassa':       [7.7833, 2.1833],
+    'Dassa':       [7.7833,    2.1833],
   };
 
   final Dio _dio = Dio(BaseOptions(
@@ -37,7 +37,7 @@ class MeteoService {
   }
 
   Future<MeteoData?> getMeteo(String nomVille) async {
-    final coords = _coords[nomVille];
+    final coords = MeteoService.coords[nomVille];
     if (coords == null) {
       print('Ville inconnue : $nomVille');
       return null;
@@ -63,7 +63,7 @@ class MeteoService {
   }
 
   Future<List<PrevisionJour>> getPrevisions(String nomVille) async {
-    final coords = _coords[nomVille];
+    final coords = MeteoService.coords[nomVille];
     if (coords == null) return [];
 
     try {

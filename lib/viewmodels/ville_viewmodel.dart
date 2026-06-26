@@ -1,4 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz_data;
 import '../models/ville.dart';
 import '../services/meteo_service.dart';
 import '../models/meteo_data.dart';
@@ -14,7 +17,6 @@ class VilleViewModel extends ChangeNotifier {
   bool _chargement = false;
   String? _erreur;
 
-  // ① Cache ajouté ici
   final Map<String, (MeteoData, DateTime)> _cache = {};
 
   List<Ville> get villes => _villes;
@@ -51,7 +53,6 @@ class VilleViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ② Méthode de vérification du cache ajoutée ici
   bool _cacheValide(String nomVille) {
     if (!_cache.containsKey(nomVille)) return false;
     final age = DateTime.now().difference(_cache[nomVille]!.$2);
@@ -62,7 +63,6 @@ class VilleViewModel extends ChangeNotifier {
     _villeSelectionnee = ville;
     _erreur = null;
 
-    // ③ Vérification du cache avant d'appeler l'API
     if (_cacheValide(ville.nom)) {
       _meteoActuelle = _cache[ville.nom]!.$1;
       notifyListeners();
@@ -84,6 +84,12 @@ class VilleViewModel extends ChangeNotifier {
       _meteoActuelle = meteo;
       _previsions    = prevs;
       _cache[ville.nom] = (meteo, DateTime.now());
+
+      // Verifier si la temperature depasse le seuil d'alerte
+      await _verifierAlerteChaleur();
+
+      // Planifier la notification quotidienne
+      await planifierNotificationQuotidienne();
     } else {
       _erreur = 'Impossible de charger la météo';
     }
@@ -94,5 +100,96 @@ class VilleViewModel extends ChangeNotifier {
   void ajouterVille(Ville ville) {
     _villes.add(ville);
     notifyListeners();
+  }
+
+  // Mettre a jour la photo de la ville selectionnee
+  void mettreAJourPhoto(String cheminPhoto) {
+    if (_villeSelectionnee == null) return;
+
+    // Trouver l'index de la ville dans la liste
+    final index = _villes.indexWhere((v) => v.nom == _villeSelectionnee!.nom);
+    if (index == -1) return;
+
+    // Creer une copie avec la nouvelle photo
+    _villes[index] = _villes[index].copierAvecPhoto(cheminPhoto);
+    _villeSelectionnee = _villes[index];
+
+    notifyListeners(); // prevenir les widgets
+  }
+
+  // Dans le ViewModel, apres avoir charge la meteo :
+  Future<void> _verifierAlerteChaleur() async {
+    if (_meteoActuelle == null) return;
+    if (_meteoActuelle!.temperature > 33) {
+      final plugin = FlutterLocalNotificationsPlugin();
+
+      // Initialisation obligatoire avant show()
+      const AndroidInitializationSettings androidSettings =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+      await plugin.initialize(
+        InitializationSettings(android: androidSettings),
+      );
+
+      const AndroidNotificationDetails details = AndroidNotificationDetails(
+        'canal_alerte', 'Alertes Meteo',
+        importance: Importance.high, priority: Priority.high,
+      );
+
+      await plugin.show(
+        1,
+        'Alerte chaleur !',
+        'Il fait ${_meteoActuelle!.temperature.toStringAsFixed(0)}°C à ${_villeSelectionnee!.nom}',
+        NotificationDetails(android: details),
+      );
+    }
+  }
+
+  // Exercice C : notification planifiée exactement à 7h00 chaque matin
+  Future<void> planifierNotificationQuotidienne() async {
+    final plugin = FlutterLocalNotificationsPlugin();
+
+    // Initialisation
+    const AndroidInitializationSettings androidSettings =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
+    await plugin.initialize(
+      InitializationSettings(android: androidSettings),
+    );
+
+    // Initialiser les fuseaux horaires
+    tz_data.initializeTimeZones();
+    final location = tz.getLocation('Africa/Porto-Novo'); // fuseau Bénin
+
+    // Calculer le prochain 7h00
+    final maintenant = tz.TZDateTime.now(location);
+    var prochain7h = tz.TZDateTime(location,
+        maintenant.year, maintenant.month, maintenant.day, 7, 0, 0);
+
+    // Si 7h00 est déjà passé aujourd'hui, on planifie pour demain
+    if (prochain7h.isBefore(maintenant)) {
+      prochain7h = prochain7h.add(Duration(days: 1));
+    }
+
+    const AndroidNotificationDetails details = AndroidNotificationDetails(
+      'canal_quotidien', 'Météo Quotidienne',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+
+    // Annuler l'ancienne planification avant d'en créer une nouvelle
+    await plugin.cancel(2);
+
+    // Planifier la notification à 7h00 chaque jour
+    await plugin.zonedSchedule(
+      2,
+      'Météo du jour ☀️',
+      _villeSelectionnee != null
+          ? 'Bonjour ! Météo à ${_villeSelectionnee!.nom} : ${_meteoActuelle?.conditionTexte ?? "chargement..."}'
+          : 'Bonjour ! Consultez la météo du jour.',
+      prochain7h,
+      NotificationDetails(android: details),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time, // répète chaque jour à la même heure
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    );
   }
 }

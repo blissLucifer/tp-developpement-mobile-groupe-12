@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../viewmodels/ville_viewmodel.dart';
+import '../services/localisation_service.dart';
+import '../services/meteo_service.dart';
 import 'ecran_liste_villes.dart';
 
-class EcranAccueil extends StatelessWidget {
+class EcranAccueil extends StatefulWidget {
   const EcranAccueil({super.key});
+
+  @override
+  State<EcranAccueil> createState() => _EcranAccueilState();
+}
+
+class _EcranAccueilState extends State<EcranAccueil> {
 
   IconData _iconeMeteo(String condition) {
     switch (condition) {
@@ -42,18 +52,20 @@ class EcranAccueil extends StatelessWidget {
         foregroundColor: Colors.white,
       ),
       body: ville == null
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: Colors.yellow))
           : Container(
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
           color: _couleurFond(ville.condition),
         ),
-        child: Center(
+        // SingleChildScrollView pour eviter le debordement sur petits ecrans
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              SizedBox(height: 24),
               Icon(
                 _iconeMeteo(ville.condition),
                 size: 100,
@@ -63,7 +75,7 @@ class EcranAccueil extends StatelessWidget {
               Consumer<VilleViewModel>(
                 builder: (context, vm, _) {
                   if (vm.chargement) {
-                    return CircularProgressIndicator();
+                    return CircularProgressIndicator(color: Colors.yellow);
                   }
                   if (vm.erreur != null) {
                     return Column(children: [
@@ -128,19 +140,149 @@ class EcranAccueil extends StatelessWidget {
                 ville.nom,
                 style: TextStyle(fontSize: 28, color: Colors.grey[700]),
               ),
-              SizedBox(height: 32),
-              ElevatedButton.icon(
-                icon: Icon(Icons.list),
-                label: Text('Changer de ville'),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => EcranListeVilles(),
+
+              // Coordonnées GPS de la ville sélectionnée
+              Builder(
+                builder: (_) {
+                  final coords = MeteoService.coords[ville.nom];
+                  if (coords == null) return SizedBox.shrink();
+                  return Text(
+                    'Lat: ${coords[0].toStringAsFixed(4)} | Lon: ${coords[1].toStringAsFixed(4)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: switch (ville.condition) {
+                        'Ensoleille' => Colors.deepOrange,
+                        'Nuageux'    => Colors.blueGrey,
+                        'Pluvieux'   => Colors.blueAccent,
+                        'Orageux'    => Colors.indigo,
+                        'Venteux'    => Colors.teal,
+                        'Neigeux'    => Colors.lightBlue,
+                        _            => Colors.grey,
+                      },
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.5,
                     ),
                   );
                 },
               ),
+
+              SizedBox(height: 32),
+
+              // Ajouter dans le body de EcranAccueil :
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: GestureDetector(
+                  onTap: () async {
+                    // Afficher le choix : galerie ou appareil photo
+                    final source = await showModalBottomSheet<ImageSource>(
+                      context: context,
+                      builder: (ctx) => SafeArea(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.photo_library),
+                              title: Text('Galerie'),
+                              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+                            ),
+                            ListTile(
+                              leading: Icon(Icons.camera_alt),
+                              title: Text('Appareil photo'),
+                              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+
+                    if (source == null) return; // l'utilisateur a fermé sans choisir
+
+                    final picker = ImagePicker();
+                    final XFile? image = await picker.pickImage(source: source);
+
+                    if (image != null) {
+                      // Mettre a jour le ViewModel avec le chemin de la photo
+                      context.read<VilleViewModel>().mettreAJourPhoto(image.path);
+                    }
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: vm.villeSelectionnee?.photoPath != null
+                        ? Image.file(
+                      File(vm.villeSelectionnee!.photoPath!),
+                      width: double.infinity,
+                      height: 200,
+                      fit: BoxFit.cover,
+                    )
+                        : Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: Colors.grey[200],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
+                          Text('Appuyez pour ajouter une photo'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 16),
+              // Boutons côte à côte : changer de ville et ville la plus proche
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.list),
+                        label: Text('Changer de ville'),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => EcranListeVilles(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        icon: Icon(Icons.my_location),
+                        label: Text('Trouver la ville la plus proche'),
+                        onPressed: () async {
+                          final service = LocalisationService();
+                          final position = await service.getPosition();
+
+                          if (position != null) {
+                            final vm = context.read<VilleViewModel>();
+                            final villeProche = service.trouverVilleProche(
+                              position, vm.villes, MeteoService.coords,
+                            );
+
+                            if (villeProche != null) {
+                              vm.selectionnerVille(villeProche);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Ville proche : ${villeProche.nom}')),
+                              );
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('GPS indisponible')),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
             ],
           ),
         ),
