@@ -89,7 +89,11 @@ class VilleViewModel extends ChangeNotifier {
       await _verifierAlerteChaleur();
 
       // Planifier la notification quotidienne
-      await planifierNotificationQuotidienne();
+      try {
+        await planifierNotificationQuotidienne();
+      } catch (e) {
+        print('Erreur notification planifiée : $e');
+      }
     } else {
       _erreur = 'Impossible de charger la météo';
     }
@@ -187,9 +191,10 @@ class VilleViewModel extends ChangeNotifier {
           : 'Bonjour ! Consultez la météo du jour.',
       prochain7h,
       NotificationDetails(android: details),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexact, // inexact pour éviter l'erreur Android 12+
       matchDateTimeComponents: DateTimeComponents.time, // répète chaque jour à la même heure
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      uiLocalNotificationDateInterpretation:
+      UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 }

@@ -3,6 +3,12 @@
     <!-- Permission Camera -->
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- Permission alarmes exactes (Android 12+) -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
+    <!-- Permission Internet (obligatoire pour l'API météo) -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <!-- Permission GPS -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
