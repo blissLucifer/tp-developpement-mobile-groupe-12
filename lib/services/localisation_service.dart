@@ -2,7 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import '../models/ville.dart';
 
 class LocalisationService {
-
   Future<Position?> getPosition() async {
     bool actif = await Geolocator.isLocationServiceEnabled();
     if (!actif) return null;
@@ -19,8 +18,11 @@ class LocalisationService {
   }
 
   // Trouver la ville la plus proche dans une liste
-  Ville? trouverVilleProche(Position position, List<Ville> villes,
-      Map<String, List<double>> coordonnees) {
+  Ville? trouverVilleProche(
+    Position position,
+    List<Ville> villes,
+    Map<String, List<double>> coordonnees,
+  ) {
     Ville? plusProche;
     double distanceMin = double.infinity;
 
@@ -29,8 +31,10 @@ class LocalisationService {
       if (coords == null) continue;
 
       final distance = Geolocator.distanceBetween(
-        position.latitude, position.longitude,
-        coords[0], coords[1],
+        position.latitude,
+        position.longitude,
+        coords[0],
+        coords[1],
       );
 
       if (distance < distanceMin) {

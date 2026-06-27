@@ -1,6 +1,6 @@
 class MeteoData {
-  final double temperature;  // Température en Celsius
-  final int humidite;  // Humidité en %
+  final double temperature; // Température en Celsius
+  final int humidite; // Humidité en %
   final int weatherCode; // Code WMO (0 = ensoleillé, 61 = pluvieux, ...)
   final String time;
 
@@ -14,9 +14,9 @@ class MeteoData {
   factory MeteoData.fromJson(Map<String, dynamic> json) {
     return MeteoData(
       temperature: (json['temperature_2m'] as num).toDouble(),
-      humidite:    (json['relative_humidity_2m'] as num).toInt(),
+      humidite: (json['relative_humidity_2m'] as num).toInt(),
       weatherCode: (json['weathercode'] as num).toInt(),
-      time:        json['time'] as String,
+      time: json['time'] as String,
     );
   }
 
@@ -35,12 +35,12 @@ class MeteoData {
   }
 
   String get dateMesure {
-    final dt    = DateTime.parse(time);
-    final jour  = dt.day.toString().padLeft(2, '0');
-    final mois  = dt.month.toString().padLeft(2, '0');
+    final dt = DateTime.parse(time);
+    final jour = dt.day.toString().padLeft(2, '0');
+    final mois = dt.month.toString().padLeft(2, '0');
     final annee = dt.year;
     final heure = dt.hour.toString().padLeft(2, '0');
-    final min   = dt.minute.toString().padLeft(2, '0');
+    final min = dt.minute.toString().padLeft(2, '0');
     return 'Mesure du $jour/$mois/$annee à ${heure}h$min';
   }
 }

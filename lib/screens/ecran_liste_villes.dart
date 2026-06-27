@@ -25,9 +25,7 @@ class EcranListeVilles extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => EcranAjoutVille(),
-            ),
+            MaterialPageRoute(builder: (_) => EcranAjoutVille()),
           );
         },
       ),
@@ -45,7 +43,9 @@ class EcranListeVilles extends StatelessWidget {
             title: Text(
               ville.nom,
               style: TextStyle(
-                fontWeight: estSelectionnee ? FontWeight.bold : FontWeight.normal,
+                fontWeight: estSelectionnee
+                    ? FontWeight.bold
+                    : FontWeight.normal,
               ),
             ),
             subtitle: Text('${ville.pays} - ${ville.temperature}°C'),

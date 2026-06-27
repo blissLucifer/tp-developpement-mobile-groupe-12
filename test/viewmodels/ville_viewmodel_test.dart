@@ -11,7 +11,6 @@ void main() {
   });
 
   group('VilleViewModel', () {
-
     test('la liste initiale contient au moins 4 villes', () {
       expect(vm.villes.length, greaterThanOrEqualTo(4));
     });
@@ -33,13 +32,15 @@ void main() {
     // Verifie que l'ajout d'une ville incremente correctement la taille de la liste
     test('ajouterVille augmente la liste de 1', () {
       final nbAvant = vm.villes.length;
-      vm.ajouterVille(Ville(
-        nom: 'Lomé',
-        pays: 'Togo',
-        temperature: 28,
-        condition: 'Ensoleille',
-        humidite: 70,
-      ));
+      vm.ajouterVille(
+        Ville(
+          nom: 'Lomé',
+          pays: 'Togo',
+          temperature: 28,
+          condition: 'Ensoleille',
+          humidite: 70,
+        ),
+      );
       expect(vm.villes.length, equals(nbAvant + 1));
     });
 
@@ -52,6 +53,5 @@ void main() {
       vm.selectionnerVille(lagos);
       expect(compteur, greaterThan(0));
     });
-
   });
 }

@@ -9,9 +9,7 @@ import 'package:app_meteo/screens/ecran_liste_villes.dart';
 Widget creerAppTest() {
   return ChangeNotifierProvider(
     create: (_) => VilleViewModel(),
-    child: MaterialApp(
-      home: EcranAccueil(),
-    ),
+    child: MaterialApp(home: EcranAccueil()),
   );
 }
 
@@ -28,7 +26,6 @@ Future<void> attendreRendu(WidgetTester tester) async {
 }
 
 void main() {
-
   testWidgets('EcranAccueil affiche une AppBar avec le titre', (tester) async {
     // Monter le widget
     await tester.pumpWidget(creerAppTest());
@@ -70,5 +67,4 @@ void main() {
     // ASSERT : l'ecran de liste est visible
     expect(find.byType(EcranListeVilles), findsOneWidget);
   });
-
 }

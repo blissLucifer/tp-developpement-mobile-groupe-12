@@ -26,15 +26,29 @@ class EcranDetailVille extends StatelessWidget {
               child: Icon(Icons.wb_sunny, size: 180, color: Colors.orange),
             ),
             SizedBox(height: 24),
-            Text(ville.nom, style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold)),
-            Text(ville.pays, style: TextStyle(fontSize: 18, color: Colors.grey)),
+            Text(
+              ville.nom,
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              ville.pays,
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
             SizedBox(height: 16),
             if (meteo != null) ...[
-              Text('${meteo!.temperature.toStringAsFixed(1)}°C',
-                  style: TextStyle(fontSize: 72, fontWeight: FontWeight.bold, color: Colors.blue)),
-              Text('${meteo!.conditionTexte} - ${meteo!.humidite}% humidite',
-                  style: TextStyle(fontSize: 18, color: Colors.grey[600])),
-            ]
+              Text(
+                '${meteo!.temperature.toStringAsFixed(1)}°C',
+                style: TextStyle(
+                  fontSize: 72,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              Text(
+                '${meteo!.conditionTexte} - ${meteo!.humidite}% humidite',
+                style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+              ),
+            ],
           ],
         ),
       ),

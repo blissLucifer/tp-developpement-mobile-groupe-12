@@ -8,7 +8,6 @@ import '../models/meteo_data.dart';
 import '../models/prevision_jour.dart';
 
 class VilleViewModel extends ChangeNotifier {
-
   List<Ville> _villes = [];
   Ville? _villeSelectionnee;
   final MeteoService _meteoService = MeteoService();
@@ -32,22 +31,118 @@ class VilleViewModel extends ChangeNotifier {
 
   void _initialiser() {
     _villes = [
-      Ville(nom: 'Cotonou',     pays: 'Benin',    temperature: 40, condition: 'Ensoleille', humidite: 75),
-      Ville(nom: 'Parakou',     pays: 'Benin',    temperature: 32, condition: 'Ensoleille', humidite: 60),
-      Ville(nom: 'Lagos',       pays: 'Nigeria',  temperature: 31, condition: 'Nuageux',    humidite: 80),
-      Ville(nom: 'Abidjan',     pays: 'CI',       temperature: 27, condition: 'Pluvieux',   humidite: 85),
-      Ville(nom: 'Dakar',       pays: 'Senegal',  temperature: 26, condition: 'Venteux',    humidite: 70),
-      Ville(nom: 'Avrankou',    pays: 'Benin',    temperature: 16, condition: 'Nuageux',    humidite: 75),
-      Ville(nom: 'Lome',        pays: 'Togo',     temperature: 28, condition: 'Orageux',    humidite: 90),
-      Ville(nom: 'Accra',       pays: 'Ghana',    temperature: 30, condition: 'Nuageux',    humidite: 78),
-      Ville(nom: 'Bamako',      pays: 'Mali',     temperature: 38, condition: 'Ensoleille', humidite: 25),
-      Ville(nom: 'Niamey',      pays: 'Niger',    temperature: 41, condition: 'Ensoleille', humidite: 18),
-      Ville(nom: 'Ouagadougou', pays: 'Burkina',  temperature: 39, condition: 'Venteux',    humidite: 22),
-      Ville(nom: 'Douala',      pays: 'Cameroun', temperature: 27, condition: 'Pluvieux',   humidite: 90),
-      Ville(nom: 'Kinshasa',    pays: 'Congo',    temperature: 26, condition: 'Orageux',    humidite: 88),
-      Ville(nom: 'Abuja',       pays: 'Nigeria',  temperature: 33, condition: 'Nuageux',    humidite: 55),
-      Ville(nom: 'Natitingou',  pays: 'Bénin',    temperature: 40, condition: 'Venteux',    humidite: 56),
-      Ville(nom: 'Dassa',       pays: 'Bénin',    temperature: 56, condition: 'Venteux',    humidite: 44),
+      Ville(
+        nom: 'Cotonou',
+        pays: 'Benin',
+        temperature: 40,
+        condition: 'Ensoleille',
+        humidite: 75,
+      ),
+      Ville(
+        nom: 'Parakou',
+        pays: 'Benin',
+        temperature: 32,
+        condition: 'Ensoleille',
+        humidite: 60,
+      ),
+      Ville(
+        nom: 'Lagos',
+        pays: 'Nigeria',
+        temperature: 31,
+        condition: 'Nuageux',
+        humidite: 80,
+      ),
+      Ville(
+        nom: 'Abidjan',
+        pays: 'CI',
+        temperature: 27,
+        condition: 'Pluvieux',
+        humidite: 85,
+      ),
+      Ville(
+        nom: 'Dakar',
+        pays: 'Senegal',
+        temperature: 26,
+        condition: 'Venteux',
+        humidite: 70,
+      ),
+      Ville(
+        nom: 'Avrankou',
+        pays: 'Benin',
+        temperature: 16,
+        condition: 'Nuageux',
+        humidite: 75,
+      ),
+      Ville(
+        nom: 'Lome',
+        pays: 'Togo',
+        temperature: 28,
+        condition: 'Orageux',
+        humidite: 90,
+      ),
+      Ville(
+        nom: 'Accra',
+        pays: 'Ghana',
+        temperature: 30,
+        condition: 'Nuageux',
+        humidite: 78,
+      ),
+      Ville(
+        nom: 'Bamako',
+        pays: 'Mali',
+        temperature: 38,
+        condition: 'Ensoleille',
+        humidite: 25,
+      ),
+      Ville(
+        nom: 'Niamey',
+        pays: 'Niger',
+        temperature: 41,
+        condition: 'Ensoleille',
+        humidite: 18,
+      ),
+      Ville(
+        nom: 'Ouagadougou',
+        pays: 'Burkina',
+        temperature: 39,
+        condition: 'Venteux',
+        humidite: 22,
+      ),
+      Ville(
+        nom: 'Douala',
+        pays: 'Cameroun',
+        temperature: 27,
+        condition: 'Pluvieux',
+        humidite: 90,
+      ),
+      Ville(
+        nom: 'Kinshasa',
+        pays: 'Congo',
+        temperature: 26,
+        condition: 'Orageux',
+        humidite: 88,
+      ),
+      Ville(
+        nom: 'Abuja',
+        pays: 'Nigeria',
+        temperature: 33,
+        condition: 'Nuageux',
+        humidite: 55,
+      ),
+      Ville(
+        nom: 'Natitingou',
+        pays: 'Bénin',
+        temperature: 40,
+        condition: 'Venteux',
+        humidite: 56,
+      ),
+      Ville(
+        nom: 'Dassa',
+        pays: 'Bénin',
+        temperature: 56,
+        condition: 'Venteux',
+        humidite: 44,
+      ),
     ];
     _villeSelectionnee = _villes.first;
     notifyListeners();
@@ -82,7 +177,7 @@ class VilleViewModel extends ChangeNotifier {
 
     if (meteo != null) {
       _meteoActuelle = meteo;
-      _previsions    = prevs;
+      _previsions = prevs;
       _cache[ville.nom] = (meteo, DateTime.now());
 
       // Verifier si la temperature depasse le seuil d'alerte
@@ -129,14 +224,14 @@ class VilleViewModel extends ChangeNotifier {
 
       // Initialisation obligatoire avant show()
       const AndroidInitializationSettings androidSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-      await plugin.initialize(
-        InitializationSettings(android: androidSettings),
-      );
+          AndroidInitializationSettings('@mipmap/ic_launcher');
+      await plugin.initialize(InitializationSettings(android: androidSettings));
 
       const AndroidNotificationDetails details = AndroidNotificationDetails(
-        'canal_alerte', 'Alertes Meteo',
-        importance: Importance.high, priority: Priority.high,
+        'canal_alerte',
+        'Alertes Meteo',
+        importance: Importance.high,
+        priority: Priority.high,
       );
 
       await plugin.show(
@@ -154,10 +249,8 @@ class VilleViewModel extends ChangeNotifier {
 
     // Initialisation
     const AndroidInitializationSettings androidSettings =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    await plugin.initialize(
-      InitializationSettings(android: androidSettings),
-    );
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    await plugin.initialize(InitializationSettings(android: androidSettings));
 
     // Initialiser les fuseaux horaires
     tz_data.initializeTimeZones();
@@ -165,8 +258,15 @@ class VilleViewModel extends ChangeNotifier {
 
     // Calculer le prochain 7h00
     final maintenant = tz.TZDateTime.now(location);
-    var prochain7h = tz.TZDateTime(location,
-        maintenant.year, maintenant.month, maintenant.day, 7, 0, 0);
+    var prochain7h = tz.TZDateTime(
+      location,
+      maintenant.year,
+      maintenant.month,
+      maintenant.day,
+      7,
+      0,
+      0,
+    );
 
     // Si 7h00 est déjà passé aujourd'hui, on planifie pour demain
     if (prochain7h.isBefore(maintenant)) {
@@ -174,7 +274,8 @@ class VilleViewModel extends ChangeNotifier {
     }
 
     const AndroidNotificationDetails details = AndroidNotificationDetails(
-      'canal_quotidien', 'Météo Quotidienne',
+      'canal_quotidien',
+      'Météo Quotidienne',
       importance: Importance.high,
       priority: Priority.high,
     );
@@ -191,10 +292,12 @@ class VilleViewModel extends ChangeNotifier {
           : 'Bonjour ! Consultez la météo du jour.',
       prochain7h,
       NotificationDetails(android: details),
-      androidScheduleMode: AndroidScheduleMode.inexact, // inexact pour éviter l'erreur Android 12+
-      matchDateTimeComponents: DateTimeComponents.time, // répète chaque jour à la même heure
+      androidScheduleMode: AndroidScheduleMode
+          .inexact, // inexact pour éviter l'erreur Android 12+
+      matchDateTimeComponents:
+          DateTimeComponents.time, // répète chaque jour à la même heure
       uiLocalNotificationDateInterpretation:
-      UILocalNotificationDateInterpretation.absoluteTime,
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 }

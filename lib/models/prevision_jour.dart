@@ -21,7 +21,7 @@ class PrevisionJour {
   }
 
   String get jourFormate {
-    final dt   = DateTime.parse(date);
+    final dt = DateTime.parse(date);
     final jour = dt.day.toString().padLeft(2, '0');
     final mois = dt.month.toString().padLeft(2, '0');
     return '$jour/$mois';
