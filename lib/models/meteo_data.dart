@@ -29,6 +29,11 @@ class MeteoData {
     return 'Variable';
   }
 
+  // Retourne true si T > 40°C ou orage (weatherCode >= 95)
+  bool estDangereux() {
+    return temperature > 40 || weatherCode >= 95;
+  }
+
   String get dateMesure {
     final dt    = DateTime.parse(time);
     final jour  = dt.day.toString().padLeft(2, '0');

@@ -148,7 +148,7 @@ class VilleViewModel extends ChangeNotifier {
     }
   }
 
-  // Exercice C : notification planifiée exactement à 7h00 chaque matin
+  // Notification planifiée exactement à 7h00 chaque matin
   Future<void> planifierNotificationQuotidienne() async {
     final plugin = FlutterLocalNotificationsPlugin();
 
